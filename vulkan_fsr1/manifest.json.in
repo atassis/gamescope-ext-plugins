@@ -8,7 +8,7 @@
   "env": {
     "GAMESCOPE_VULKAN_FSR1_LIST=1": "print the Vulkan devices and fail to load",
     "GAMESCOPE_VULKAN_FSR1_SYNC=1": "wait for the GPU inside submit() instead of returning a fence",
-    "GAMESCOPE_VULKAN_FSR1_DECLINE=1": "decline every size, so gamescope uses its own FSR1"
+    "GAMESCOPE_VULKAN_FSR1_DECLINE=1": "decline every size, to see gamescope stop and say why"
   },
   "device": {
     "kind": "gpu",

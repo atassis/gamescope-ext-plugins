@@ -54,9 +54,9 @@ You should see:
     external_upscaler: loaded .../vulkan_fsr1/libgamescope_vulkan_fsr1.so: device "vulkan:<the GPU you chose>" kind 2
     vulkan: external frame 120 (early): submit() blocked caller 0.4 ms, submit -> shown 6.1 ms, commit done -> shown 6.1 ms
 
-The device name must be the GPU you meant to upscale on. If you see
-`plugin declined ... using GPU FSR` instead, the plugin refused those sizes and gamescope is using its
-own FSR1 on its own GPU; the game still runs.
+The device name must be the GPU you meant to upscale on. If the plugin cannot run, gamescope stops
+instead of upscaling some other way, and its last lines say why (`external upscaler "vulkan_fsr1":
+...; stopping`).
 
 ## 5. Is it worth it?
 

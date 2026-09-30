@@ -46,7 +46,7 @@ running the game, see [MULTI_GPU.md](MULTI_GPU.md).
 `gamescope-ext-run --list` shows the plugin's config syntax and these switches. For testing:
 `GAMESCOPE_VULKAN_FSR1_LIST=1` prints the devices and fails to load,
 `GAMESCOPE_VULKAN_FSR1_SYNC=1` waits for the GPU inside `submit()`, and
-`GAMESCOPE_VULKAN_FSR1_DECLINE=1` declines every size so gamescope falls back to its own FSR1.
+`GAMESCOPE_VULKAN_FSR1_DECLINE=1` declines every size, to see gamescope stop and say why.
 
 Known gap: I have only run it on a machine with one GPU, so the cross-device case (import from one
 GPU, upscale on another) is untested.
