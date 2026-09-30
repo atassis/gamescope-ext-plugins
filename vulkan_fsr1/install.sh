@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Checks for the gamescope-ext host's ABI header and a Vulkan device that can import dma-bufs, then
-# builds and installs the vulkan_fsr1 upscaler plugin to <prefix>/share/gamescope-upscalers/vulkan_fsr1/.
+# Checks for a Vulkan device that can import dma-bufs, then builds and installs the vulkan_fsr1
+# upscaler plugin to <prefix>/share/gamescope-upscalers/vulkan_fsr1/, against the gamescope-ext host
+# installed in the same prefix.
 #
 #   install.sh [--prefix DIR] [--build-dir DIR] [--device UUID] [--check]
 #   install.sh --uninstall [--prefix DIR]
@@ -40,9 +41,6 @@ fi
 fail() { echo "vulkan_fsr1: $*" >&2; exit 1; }
 
 command -v vulkaninfo >/dev/null || fail "vulkaninfo not found (vulkan-tools)"
-export PKG_CONFIG_PATH=$prefix/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
-pkg-config --exists gamescope-external-upscaler ||
-	fail "gamescope-external-upscaler.pc not found: install the gamescope-ext host into $prefix first, or set PKG_CONFIG_PATH"
 
 # One line per device: index, uuid, dma-buf support (0/1), type, name.
 devices=$(vulkaninfo 2>/dev/null | awk '
@@ -73,6 +71,10 @@ uuid=$(cut -f2 <<<"$pick")
 echo "vulkan_fsr1: using GPU$(cut -f1 <<<"$pick") $(cut -f5 <<<"$pick") (uuid:$uuid)"
 
 [ $check_only = 1 ] && exit 0
+
+export PKG_CONFIG_PATH=$prefix/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+pkg-config --exists gamescope-external-upscaler ||
+	fail "gamescope-external-upscaler.pc not found: install the gamescope-ext host into $prefix first, or set PKG_CONFIG_PATH"
 
 reconf=; [ -d "$build/meson-private" ] && reconf=--reconfigure
 meson setup $reconf "$build" "$here" --prefix "$prefix" -Ddefault_config="uuid:$uuid" >/dev/null
