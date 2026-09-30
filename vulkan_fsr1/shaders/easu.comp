@@ -1,0 +1,42 @@
+#version 460
+#extension GL_GOOGLE_include_directive : require
+
+// Standalone EASU pass for the vulkan-fsr1 external_upscaler.h plugin. The FsrEasuF math and the
+// 4-pixel-per-invocation dispatch pattern are gamescope's own cs_easu.comp (ffx_fsr1.h, AMD FSR1,
+// MIT) unmodified; only the binding layout differs, because this plugin has no bindless descriptor
+// set. One workgroup covers a 16x16 tile; dispatch div_roundup(w,16) x div_roundup(h,16).
+layout(local_size_x = 64, local_size_y = 1, local_size_z = 1) in;
+
+layout(binding = 0) uniform sampler2D u_input;
+layout(binding = 1, rgba8) uniform writeonly image2D u_output;
+layout(push_constant) uniform Consts { uvec4 c1, c2, c3, c4; } pc;
+
+#define A_GPU 1
+#define A_GLSL 1
+#include "ffx_a.h"
+#define FSR_EASU_F 1
+AF4 FsrEasuRF(AF2 p){return AF4(textureGather(u_input, p, 0));}
+AF4 FsrEasuGF(AF2 p){return AF4(textureGather(u_input, p, 1));}
+AF4 FsrEasuBF(AF2 p){return AF4(textureGather(u_input, p, 2));}
+#include "ffx_fsr1.h"
+
+void easuPass(uvec2 pos)
+{
+	if (pos.x >= imageSize(u_output).x || pos.y >= imageSize(u_output).y)
+		return;
+	vec3 color;
+	FsrEasuF(color, pos, pc.c1, pc.c2, pc.c3, pc.c4);
+	imageStore(u_output, ivec2(pos), vec4(color, 1));
+}
+
+void main()
+{
+	uvec2 pos = ARmp8x8(gl_LocalInvocationID.x) + uvec2(gl_WorkGroupID.x << 4u, gl_WorkGroupID.y << 4u);
+	easuPass(pos);
+	pos.x += 8u;
+	easuPass(pos);
+	pos.y += 8u;
+	easuPass(pos);
+	pos.x -= 8u;
+	easuPass(pos);
+}

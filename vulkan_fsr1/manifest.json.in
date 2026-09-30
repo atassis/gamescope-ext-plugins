@@ -1,0 +1,11 @@
+{
+  "name": "@name@",
+  "abi_version": @abi_version@,
+  "library": "@library@",
+  "default_config": "@default_config@",
+  "description": "FSR1 (EASU + RCAS) on a chosen Vulkan device, cross-device via dma-buf",
+  "device": {
+    "kind": "gpu",
+    "requires": ["a Vulkan device with VK_EXT_external_memory_dma_buf"]
+  }
+}

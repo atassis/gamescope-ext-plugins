@@ -1,0 +1,29 @@
+#version 460
+#extension GL_GOOGLE_include_directive : require
+
+// Standalone RCAS pass, same provenance note as easu.comp: FsrRcasF is gamescope's own ffx_fsr1.h
+// unmodified, called with a plain sampled-image/storage-image binding instead of gamescope's
+// bindless descriptor set.
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout(binding = 0) uniform sampler2D u_input;
+layout(binding = 1, rgba8) uniform writeonly image2D u_output;
+layout(push_constant) uniform Consts { uvec4 con; } pc;
+
+#define A_GPU 1
+#define A_GLSL 1
+#include "ffx_a.h"
+#define FSR_RCAS_F 1
+AF4 FsrRcasLoadF(ASU2 p) { return texelFetch(u_input, p, 0); }
+void FsrRcasInputF(inout AF1 r, inout AF1 g, inout AF1 b) {}
+#include "ffx_fsr1.h"
+
+void main()
+{
+	ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+	if (pos.x >= imageSize(u_output).x || pos.y >= imageSize(u_output).y)
+		return;
+	vec3 color;
+	FsrRcasF(color.r, color.g, color.b, uvec2(pos), pc.con);
+	imageStore(u_output, pos, vec4(color, 1));
+}

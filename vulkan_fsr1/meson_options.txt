@@ -1,0 +1,1 @@
+option('default_config', type: 'string', value: '', description: 'Config used when -F external:vulkan_fsr1 has none, e.g. uuid:<deviceUUID>')
