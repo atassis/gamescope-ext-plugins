@@ -4,6 +4,12 @@
   "library": "@library@",
   "default_config": "@default_config@",
   "description": "FSR1 (EASU + RCAS) on a chosen Vulkan device, cross-device via dma-buf",
+  "config_help": "uuid:<deviceUUID> or index:<n>, as vulkaninfo lists the devices; any scale and size",
+  "env": {
+    "GAMESCOPE_VULKAN_FSR1_LIST=1": "print the Vulkan devices and fail to load",
+    "GAMESCOPE_VULKAN_FSR1_SYNC=1": "wait for the GPU inside submit() instead of returning a fence",
+    "GAMESCOPE_VULKAN_FSR1_DECLINE=1": "decline every size, so gamescope uses its own FSR1"
+  },
   "device": {
     "kind": "gpu",
     "requires": ["a Vulkan device with VK_EXT_external_memory_dma_buf"]

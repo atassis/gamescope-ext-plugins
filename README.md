@@ -43,7 +43,8 @@ running the game, see [MULTI_GPU.md](MULTI_GPU.md).
 `vulkan_fsr1/install.sh` installs the plugin alone, against a host already installed in the same
 `--prefix`.
 
-For testing: `GAMESCOPE_VULKAN_FSR1_LIST=1` prints the devices and fails to load,
+`gamescope-ext-run --list` shows the plugin's config syntax and these switches. For testing:
+`GAMESCOPE_VULKAN_FSR1_LIST=1` prints the devices and fails to load,
 `GAMESCOPE_VULKAN_FSR1_SYNC=1` waits for the GPU inside `submit()`, and
 `GAMESCOPE_VULKAN_FSR1_DECLINE=1` declines every size so gamescope falls back to its own FSR1.
 
